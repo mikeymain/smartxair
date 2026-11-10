@@ -199,8 +199,25 @@ test('T shape has no top arm; outline pass grows every shape', () => {
   assert.equal(b.x, a.x - 2);
 });
 
+const covers = (rects, x, y) => rects.some(r => x >= r.x && x < r.x + r.w && y >= r.y && y < r.y + r.h);
+
 test('dot covers the centre pixel', () => {
-  const c = { ...store.DEFAULT_CROSSHAIR, style: 'dot', dotSize: 3 };
-  const [r] = bounds(Crosshair.shapes(c, 0));
-  assert.ok(r.x <= 0 && r.x + r.w > 0 && r.y <= 0 && r.y + r.h > 0);
+  for (const dotSize of [1, 2, 3, 4, 7]) {
+    const c = { ...store.DEFAULT_CROSSHAIR, style: 'dot', dotSize };
+    assert.ok(covers(bounds(Crosshair.shapes(c, 0)), 0, 0), 'size ' + dotSize);
+  }
+});
+
+test('dot is round: full width through the middle, corners cut, symmetric', () => {
+  for (const dotSize of [3, 4, 5, 8, 12]) {
+    const c = { ...store.DEFAULT_CROSSHAIR, style: 'dot', dotSize, outline: false };
+    const rects = bounds(Crosshair.shapes(c, 0));
+    const x0 = -Math.floor(dotSize / 2), x1 = x0 + dotSize - 1; // square the old dot filled
+    assert.ok(covers(rects, x0, 0) && covers(rects, x1, 0), 'full middle row at ' + dotSize);
+    assert.equal(covers(rects, x0, x0), false, 'top-left corner cut at ' + dotSize);
+    assert.equal(covers(rects, x1, x1), false, 'bottom-right corner cut at ' + dotSize);
+    const rows = rects.map(r => r.w);
+    assert.deepEqual(rows, [...rows].reverse(), 'symmetric rows at ' + dotSize);
+    assert.equal(rects.length, dotSize, 'one row per pixel at ' + dotSize);
+  }
 });
