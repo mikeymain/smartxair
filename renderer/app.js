@@ -57,7 +57,7 @@ function whenChanged(keyOf, rebuild) {
 
 // ---- tabs -------------------------------------------------------------------
 
-// One tab switcher for both tab bars: the CSS fallback buttons and the WebGL glass ones (glass-tabs.js).
+// Keep the tabs and their panels in sync.
 const tabListeners = [];
 function selectTab(name) {
   document.querySelectorAll('.tab').forEach(t => {

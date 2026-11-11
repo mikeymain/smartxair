@@ -18,11 +18,6 @@ namespace SmartXair
 
         public const int CURSOR_SHOWING = 1;
 
-        public const int SM_XVIRTUALSCREEN = 76;
-        public const int SM_YVIRTUALSCREEN = 77;
-        public const int SM_CXVIRTUALSCREEN = 78;
-        public const int SM_CYVIRTUALSCREEN = 79;
-
         public const uint MONITOR_DEFAULTTONEAREST = 2;
 
         public const int GWL_STYLE = -16;
@@ -108,7 +103,6 @@ namespace SmartXair
         [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr hWnd, ref POINT pt);
         [DllImport("user32.dll")] public static extern bool GetCursorInfo(ref CURSORINFO info);
         [DllImport("user32.dll")] public static extern bool GetClipCursor(out RECT rect);
-        [DllImport("user32.dll")] public static extern int GetSystemMetrics(int index);
         [DllImport("user32.dll")] public static extern short GetAsyncKeyState(int vKey);
         [DllImport("user32.dll")] public static extern IntPtr MonitorFromWindow(IntPtr hWnd, uint flags);
         [DllImport("user32.dll")] public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO info);

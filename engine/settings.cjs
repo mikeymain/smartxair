@@ -53,6 +53,7 @@ const oneOf = (v, list, def) => (list.includes(v) ? v : def);
 const text = (v, def, max) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : def);
 
 function cleanCrosshair(c = {}) {
+  c ??= {};
   const d = DEFAULT_CROSSHAIR;
   return {
     style: oneOf(c.style, STYLES, d.style),
@@ -72,6 +73,7 @@ function cleanCrosshair(c = {}) {
 }
 
 function cleanDetection(x = {}) {
+  x ??= {};
   const d = defaults().detection;
   const games = Array.isArray(x.games)
     ? [...new Map(x.games.map(normalizeExe).filter(Boolean).map(g => [g.toLowerCase(), g])).values()].slice(0, 50)
@@ -156,7 +158,10 @@ function toShareCode(crosshair) {
 function fromShareCode(code) {
   const s = String(code || '').trim();
   try {
-    if (s.startsWith('SR2-')) return cleanCrosshair(JSON.parse(Buffer.from(s.slice(4), 'base64url').toString('utf8')));
+    if (s.startsWith('SR2-')) {
+      const crosshair = JSON.parse(Buffer.from(s.slice(4), 'base64url').toString('utf8'));
+      return crosshair === null ? null : cleanCrosshair(crosshair);
+    }
     if (s.startsWith('SR1-')) {
       const pairs = Buffer.from(s.slice(4), 'base64').toString('utf8').split(';');
       const o = {};
