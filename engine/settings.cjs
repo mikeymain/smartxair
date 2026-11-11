@@ -158,7 +158,10 @@ function toShareCode(crosshair) {
 function fromShareCode(code) {
   const s = String(code || '').trim();
   try {
-    if (s.startsWith('SR2-')) return cleanCrosshair(JSON.parse(Buffer.from(s.slice(4), 'base64url').toString('utf8')));
+    if (s.startsWith('SR2-')) {
+      const crosshair = JSON.parse(Buffer.from(s.slice(4), 'base64url').toString('utf8'));
+      return crosshair === null ? null : cleanCrosshair(crosshair);
+    }
     if (s.startsWith('SR1-')) {
       const pairs = Buffer.from(s.slice(4), 'base64').toString('utf8').split(';');
       const o = {};

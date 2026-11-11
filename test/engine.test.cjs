@@ -42,6 +42,7 @@ test('share code from the C# version (SR1) still loads', () => {
 test('bad and corrupt share codes are rejected', () => {
   assert.equal(store.fromShareCode('garbage'), null);
   assert.equal(store.fromShareCode('SR2-!!!notbase64'), null);
+  assert.equal(store.fromShareCode('SR2-' + Buffer.from('null').toString('base64url')), null);
 });
 
 test('settings values are clamped and junk is ignored', () => {
