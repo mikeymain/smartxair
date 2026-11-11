@@ -146,7 +146,8 @@ if (!app.requestSingleInstanceLock()) {
   // ---- settings ---------------------------------------------------------
 
   function applySettings() {
-    toggleKey = new ComboWatcher(parseCombo(settings.detection.toggleHotkey));
+    const codes = parseCombo(settings.detection.toggleHotkey);
+    if (!toggleKey || toggleKey.codes.join(',') !== codes.join(',')) toggleKey = new ComboWatcher(codes);
     aimCodes = parseCombo(settings.detection.aimKey);
     sendCrosshair();
     refreshTray();

@@ -24,10 +24,10 @@ class Detector {
     if (stale || retry) {
       this.names = win.processNames();
       this.namesAt = now;
+      if (this.missedAt.size > 64) this.missedAt.clear();
+      this.missedAt.set(pid, now);
     }
     if (this.names.has(pid)) return this.names.get(pid);
-    if (this.missedAt.size > 64) this.missedAt.clear();
-    this.missedAt.set(pid, now);
     return '?';
   }
 
