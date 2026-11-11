@@ -111,7 +111,6 @@
       window.addEventListener('mousedown', onMouse, true);
       window.addEventListener('contextmenu', block, true);
     });
-    button.setAttribute('aria-label', 'Change key');
     return {
       sync(v) {
         current = v;

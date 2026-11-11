@@ -30,7 +30,7 @@ If the debug log says `Borderless: FAILED`, the game runs as administrator. Run 
   - Auto-detect fullscreen games
   - Aim mode (`Always`, `Hide while aiming`, `Only while aiming`), with a configurable aim key
   - Show delay
-  - On/off hotkey, Launch with Windows (packaged build only), Start in the tray, and the debug log
+  - On/off hotkey, Launch with Windows (packaged build only), and Start in the tray
 Closing the window leaves the overlay running from the tray. Use the tray menu to quit.
 
 ## Safety
@@ -50,7 +50,7 @@ It never injects into or reads the game's memory. Check the game's rules anyway.
 | `main.cjs` | Windows, tray, the detection loop (60 Hz while the game is focused, 20 Hz otherwise), IPC. The settings window is created when opened and destroyed when closed. |
 | `engine/` | `win32.cjs` (koffi bindings), `detector.cjs`, `borderless.cjs`, `logic.cjs` (pure rules), `settings.cjs`, `log.cjs` |
 | `renderer/` | Settings UI (`index.html`, `app.js`, `ui-controls.js`, `styles.css`), click-through overlay (`overlay.html/js`), and `crosshair-draw.js`, which both share |
-| `test/` | `npm test`: 20 `node --test` cases |
+| `test/` | `npm test`: engine, settings, drawing, runtime and packaging regressions with `node --test` |
 | `scripts/snapshot.cjs` | `npm run snapshot`: screenshots every tab |
 | `prototype-csharp/` | The first native version. Its `bin\CursorLab.exe game\|menu\|softmenu\|rawgame\|windowed` fakes each game state for testing. |
 

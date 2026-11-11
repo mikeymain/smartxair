@@ -115,7 +115,7 @@
        </div>
         <div class="chips" id="game-chips"></div>
         <div class="add-row">
-          <input id="game-input" type="text" placeholder="Add exe name, e.g. TheDivision2" autocomplete="off">
+          <input id="game-input" type="text" aria-label="Game executable name" placeholder="Add exe name, e.g. TheDivision2" autocomplete="off">
           <button id="game-add" class="primary small" type="button">Add</button>
           <select id="game-running" aria-label="Add a running game">
             <option value="">Pick a running app…</option>
@@ -135,16 +135,16 @@
         <p class="eyebrow">Aiming</p>
         <div class="segmented" id="aim-mode" role="radiogroup" aria-label="Aim behaviour"></div>
         <div class="key-row">
-          <span>Aim key</span>
-          <button id="aim-key" class="key-capture" type="button"></button>
+          <span id="aim-key-label">Aim key</span>
+          <button id="aim-key" class="key-capture" type="button" aria-labelledby="aim-key-label aim-key"></button>
         </div>
         <div class="sliders" id="delay-slider"></div>
       </div>
       <div class="card">
         <p class="eyebrow">Hotkey</p>
         <div class="key-row">
-          <span>Toggle overlay</span>
-          <button id="toggle-key" class="key-capture" type="button"></button>
+          <span id="toggle-key-label">Toggle overlay</span>
+          <button id="toggle-key" class="key-capture" type="button" aria-labelledby="toggle-key-label toggle-key"></button>
         </div>
       </div>
       <div class="card">
