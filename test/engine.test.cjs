@@ -55,6 +55,18 @@ test('settings values are clamped and junk is ignored', () => {
   assert.equal(c.color, store.DEFAULT_CROSSHAIR.color);
 });
 
+test('malformed crosshair numbers preserve the rest of the profile', () => {
+  const s = store.clean({ profiles: [{ name: 'My profile', crosshair: { length: { toString: null }, gap: '9' } }] });
+  assert.equal(s.profiles[0].name, 'My profile');
+  assert.equal(s.profiles[0].crosshair.length, store.DEFAULT_CROSSHAIR.length);
+  assert.equal(s.profiles[0].crosshair.gap, 9);
+});
+
+test('malformed game entries preserve valid game names', () => {
+  const d = store.cleanDetection({ games: [{ toString: null }, 'Game.exe'] });
+  assert.deepEqual(d.games, ['Game']);
+});
+
 test('clean() survives garbage input and duplicate profile ids', () => {
   assert.deepEqual(store.clean(null), store.defaults());
   const s = store.clean({ activeProfile: 'zzz', profiles: [{ id: 'a' }, { id: 'a' }, { id: 'b' }] });
@@ -95,6 +107,8 @@ test('key combos parse', () => {
   assert.deepEqual(L.parseCombo('RButton'), [0x02]);
   assert.deepEqual(L.parseCombo('Num5'), [0x65]);
   assert.equal(L.parseCombo('NotAKey'), null);
+  assert.equal(L.parseCombo('constructor'), null);
+  assert.equal(L.parseCombo('Ctrl+__proto__'), null);
   assert.equal(L.parseCombo(''), null);
 });
 

@@ -44,6 +44,7 @@ function defaults() {
 }
 
 const int = (v, def, min, max) => {
+  if (v != null && !['number', 'string', 'boolean', 'bigint'].includes(typeof v)) return def;
   const n = Math.round(Number(v));
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : def;
 };
@@ -76,7 +77,8 @@ function cleanDetection(x = {}) {
   x ??= {};
   const d = defaults().detection;
   const games = Array.isArray(x.games)
-    ? [...new Map(x.games.map(normalizeExe).filter(Boolean).map(g => [g.toLowerCase(), g])).values()].slice(0, 50)
+    ? [...new Map(x.games.filter(g => typeof g === 'string').map(normalizeExe).filter(Boolean)
+      .map(g => [g.toLowerCase(), g])).values()].slice(0, 50)
     : d.games;
   const combo = (v, def) => (typeof v === 'string' && parseCombo(v) ? v : def);
   return {
