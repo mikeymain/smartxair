@@ -27,6 +27,7 @@ if (!app.requestSingleInstanceLock()) {
   let log;
   let mainWindow = null;
   let overlay = null;
+  let overlayReady = false;
   let overlayHwnd = 0;
   let tray = null;
   let saveTimer = null;
@@ -76,8 +77,13 @@ if (!app.requestSingleInstanceLock()) {
     });
     overlay.setAlwaysOnTop(true, 'screen-saver');
     overlay.setIgnoreMouseEvents(true);
+    overlay.webContents.once('did-finish-load', () => {
+      overlayReady = true;
+      sendCrosshair();
+      overlay.showInactive();
+      hardenOverlay();
+    });
     overlay.loadFile(path.join(__dirname, 'renderer', 'overlay.html'));
-    overlay.webContents.once('did-finish-load', () => { sendCrosshair(); overlay.showInactive(); hardenOverlay(); });
   }
 
   // If the overlay could take focus, the detector would read that as "tabbed out". Make sure it never can.
@@ -93,7 +99,7 @@ if (!app.requestSingleInstanceLock()) {
   }
 
   function sendCrosshair() {
-    if (!alive(overlay)) return;
+    if (!overlayReady || !alive(overlay)) return;
     overlay.webContents.send('overlay:crosshair', store.activeCrosshair(settings));
     overlayState.key = ''; // force a re-place with the new drawing
   }
@@ -101,7 +107,7 @@ if (!app.requestSingleInstanceLock()) {
   // Win32 gives physical pixels; Electron places windows in DIP. Place the window near the aim point, then tell the
   // page exactly which device pixel inside it is the aim point, so rounding never shifts the crosshair.
   function placeOverlay(center, visible) {
-    if (!alive(overlay)) return;
+    if (!overlayReady || !alive(overlay)) return;
     const c = store.activeCrosshair(settings);
     const aim = center ? { x: center.x + c.offsetX, y: center.y + c.offsetY } : null;
     const key = visible && aim ? `${aim.x},${aim.y}` : 'hidden';
@@ -229,7 +235,8 @@ if (!app.requestSingleInstanceLock()) {
   app.on('web-contents-created', (_e, contents) => {
     contents.setWindowOpenHandler(() => ({ action: 'deny' }));
     contents.on('will-navigate', (e) => e.preventDefault());
-  });  app.on('second-instance', showMainWindow);
+  });
+  app.on('second-instance', showMainWindow);
   app.on('before-quit', () => {
     clearTimeout(saveTimer);
     try { store.save(settingsFile(), settings); } catch { /* best effort on the way out */ }
