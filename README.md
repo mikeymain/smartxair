@@ -33,6 +33,8 @@ If the debug log says `Borderless: FAILED`, first check that the game is in Wind
   - On/off hotkey, Launch with Windows (packaged build only), and Start in the tray
 Closing the window leaves the overlay running from the tray. Use the tray menu to quit.
 
+To remove the portable app, turn off **Launch with Windows** if you enabled it, quit from the tray, then delete the extracted folder.
+
 ## Safety
 
 SmartXair uses only public Windows calls:
