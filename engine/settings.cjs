@@ -44,6 +44,7 @@ function defaults() {
 }
 
 const int = (v, def, min, max) => {
+  if (v != null && !['number', 'string', 'boolean', 'bigint'].includes(typeof v)) return def;
   const n = Math.round(Number(v));
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : def;
 };
@@ -76,7 +77,8 @@ function cleanDetection(x = {}) {
   x ??= {};
   const d = defaults().detection;
   const games = Array.isArray(x.games)
-    ? [...new Map(x.games.map(normalizeExe).filter(Boolean).map(g => [g.toLowerCase(), g])).values()].slice(0, 50)
+    ? [...new Map(x.games.filter(g => typeof g === 'string').map(normalizeExe).filter(Boolean)
+      .map(g => [g.toLowerCase(), g])).values()].slice(0, 50)
     : d.games;
   const combo = (v, def) => (typeof v === 'string' && parseCombo(v) ? v : def);
   return {
@@ -160,7 +162,8 @@ function fromShareCode(code) {
   try {
     if (s.startsWith('SR2-')) {
       const crosshair = JSON.parse(Buffer.from(s.slice(4), 'base64url').toString('utf8'));
-      return crosshair === null ? null : cleanCrosshair(crosshair);
+      if (crosshair === null || typeof crosshair !== 'object' || Array.isArray(crosshair)) return null;
+      return cleanCrosshair(crosshair);
     }
     if (s.startsWith('SR1-')) {
       const pairs = Buffer.from(s.slice(4), 'base64').toString('utf8').split(';');
@@ -169,6 +172,7 @@ function fromShareCode(code) {
         const i = pair.indexOf('=');
         if (i > 0) o[pair.slice(0, i)] = pair.slice(i + 1);
       }
+      if (!Object.keys(o).length) return null;
       if (o.style) o.style = o.style[0].toLowerCase() + o.style.slice(1);
       o.outline = o.outline === '1';
       return cleanCrosshair(o);

@@ -94,3 +94,48 @@ test('holding the hotkey toggles once across settings updates and again after re
   poll();
   assert.equal(state().enabled, true);
 });
+
+test('the overlay shows on startup when a game is already focused', () => {
+  let ready;
+  let overlayLoaded;
+  let poll;
+  const messages = [];
+  const app = {
+    requestSingleInstanceLock: () => true, on() {}, getPath: () => 'unused',
+    whenReady: () => ({ then(callback) { ready = callback; } }),
+    commandLine: { appendSwitch() {} }
+  };
+  class Window {
+    setAlwaysOnTop() {} setIgnoreMouseEvents() {} loadFile() {} isDestroyed() { return false; }
+    setBounds() {} showInactive() {} getNativeWindowHandle() { return Buffer.from([1, 0, 0, 0]); }
+    webContents = {
+      once(event, callback) { if (event === 'did-finish-load') overlayLoaded = callback; },
+      send(channel, value) { messages.push([channel, value]); }
+    };
+  }
+  class Tray { setToolTip() {} setContextMenu() {} on() {} }
+  const settings = store.defaults();
+  settings.detection.showDelayMs = 0;
+  settings.detection.forceBorderless = false;
+  loadModule('main.cjs', {
+    electron: {
+      app, BrowserWindow: Window, Tray, Menu: { buildFromTemplate: items => items }, ipcMain: { handle() {} },
+      nativeImage: { createFromPath: () => ({ resize() {} }) },
+      screen: { screenToDipPoint: point => point, dipToScreenPoint: point => point }
+    },
+    './engine/settings.cjs': { ...store, load: () => settings, adopt: () => false },
+    './engine/log.cjs': { createLog: () => () => {} },
+    './engine/win32.cjs': { keyHit: () => false, keyDown: () => false, WS_EX: {}, SWP: {}, getExStyle: () => 0, setPos() {} },
+    './engine/detector.cjs': { Detector: class { evaluate() { return { show: true, window: 1, center: { x: 320, y: 240 } }; } } },
+    './engine/borderless.cjs': { BorderlessForcer: class {} }
+  }, {
+    process: { pid: 1, argv: ['node', 'main.cjs', '--minimized'] },
+    setTimeout: callback => { poll = callback; }
+  });
+  ready();
+  assert.deepEqual(messages, [], 'the renderer cannot receive overlay updates before loading');
+  overlayLoaded();
+  poll();
+  assert.deepEqual(messages.map(([channel]) => channel), ['overlay:crosshair', 'overlay:place', 'overlay:visible']);
+  assert.equal(messages[2][1], true);
+});

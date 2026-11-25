@@ -95,7 +95,7 @@ const NAMED_KEYS = {
 function keyCode(name) {
   const k = String(name).trim().toLowerCase();
   if (!k) return 0;
-  if (NAMED_KEYS[k]) return NAMED_KEYS[k];
+  if (Object.hasOwn(NAMED_KEYS, k)) return NAMED_KEYS[k];
   let m = /^f([1-9]|1\d|2[0-4])$/.exec(k);
   if (m) return 0x6f + Number(m[1]);
   m = /^num([0-9])$/.exec(k);

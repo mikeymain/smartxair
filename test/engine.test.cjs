@@ -45,6 +45,17 @@ test('bad and corrupt share codes are rejected', () => {
   assert.equal(store.fromShareCode('SR2-' + Buffer.from('null').toString('base64url')), null);
 });
 
+test('SR2 share codes require an object but can omit crosshair fields', () => {
+  const code = value => 'SR2-' + Buffer.from(JSON.stringify(value)).toString('base64url');
+  for (const value of [false, 42, 'text', []]) assert.equal(store.fromShareCode(code(value)), null);
+  assert.equal(store.fromShareCode(code({ gap: 9 })).gap, 9);
+});
+
+test('SR1 share codes require at least one key-value pair', () => {
+  assert.equal(store.fromShareCode('SR1-'), null);
+  assert.equal(store.fromShareCode('SR1-' + Buffer.from('no separator').toString('base64url')), null);
+});
+
 test('settings values are clamped and junk is ignored', () => {
   const s = store.clean({ profiles: [{ id: 'a', name: 'x', crosshair: { gap: 9999, thickness: -5, style: 'nope', outline: false, color: 'red' } }] });
   const c = s.profiles[0].crosshair;
@@ -53,6 +64,18 @@ test('settings values are clamped and junk is ignored', () => {
   assert.equal(c.style, 'crossDot');
   assert.equal(c.outline, false);
   assert.equal(c.color, store.DEFAULT_CROSSHAIR.color);
+});
+
+test('malformed crosshair numbers preserve the rest of the profile', () => {
+  const s = store.clean({ profiles: [{ name: 'My profile', crosshair: { length: { toString: null }, gap: '9' } }] });
+  assert.equal(s.profiles[0].name, 'My profile');
+  assert.equal(s.profiles[0].crosshair.length, store.DEFAULT_CROSSHAIR.length);
+  assert.equal(s.profiles[0].crosshair.gap, 9);
+});
+
+test('malformed game entries preserve valid game names', () => {
+  const d = store.cleanDetection({ games: [{ toString: null }, 'Game.exe'] });
+  assert.deepEqual(d.games, ['Game']);
 });
 
 test('clean() survives garbage input and duplicate profile ids', () => {
@@ -95,6 +118,8 @@ test('key combos parse', () => {
   assert.deepEqual(L.parseCombo('RButton'), [0x02]);
   assert.deepEqual(L.parseCombo('Num5'), [0x65]);
   assert.equal(L.parseCombo('NotAKey'), null);
+  assert.equal(L.parseCombo('constructor'), null);
+  assert.equal(L.parseCombo('Ctrl+__proto__'), null);
   assert.equal(L.parseCombo(''), null);
 });
 

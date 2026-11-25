@@ -1,13 +1,13 @@
 {
   "name": "smartxair",
-  "version": "2.0.0",
+  "version": "2.0.0-beta.1",
   "description": "A crosshair overlay that shows only while you are actually playing. Built for The Division 2.",
   "main": "main.cjs",
   "private": true,
   "scripts": {
     "start": "electron .",
     "test": "node --test \"test/*.test.cjs\"",
-    "package": "electron-packager . SmartXair --platform=win32 --arch=x64 --icon=assets/smartxair.ico --out=dist --overwrite --prune=true --ignore=\"^/(dist|design|prototype-csharp|tests|test|bin|scripts|[.]claude|[.]finish-pass|snapshots)($|/)\"",
+    "package": "electron-packager . SmartXair --platform=win32 --arch=x64 --icon=assets/smartxair.ico --out=dist --overwrite --prune=true --ignore=\"^/(dist|design|docs|prototype-csharp|tests|test|bin|scripts|[.]claude|[.]finish-pass|snapshots)($|/)\"",
     "snapshot": "electron scripts/snapshot.cjs snapshots"
   },
   "dependencies": {
