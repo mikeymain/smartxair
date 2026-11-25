@@ -1,23 +1,23 @@
 # SmartXair
 
-A crosshair overlay for Windows that shows only while you are actually playing. Built for **The Division 2**. It is an Electron app with a tactical HUD interface.
+A free Windows crosshair overlay built for **The Division 2**. It shows during gameplay and hides in menus or when you switch apps.
 
-Formerly SmartReticle. On first start, SmartXair copies the old settings from `%APPDATA%\smartreticle`.
+![SmartXair crosshair editor with a live preview and controls for shape, colour, and size](docs/crosshair.png)
 
-## Run it
+## Download
 
-- Packaged: `dist\SmartXair-win32-x64\SmartXair.exe`
-- From source: `npm install`, then `npm start`
+1. Download the Windows x64 ZIP from [GitHub Releases](https://github.com/mikeymain/smartxair/releases).
+2. Extract the entire ZIP, then open `SmartXair.exe` from the extracted folder. Windows may show a SmartScreen warning because the beta is unsigned.
 
-If npm's install-script blocker skips Electron's download, run `node node_modules/electron/install.js` once.
+On first launch, SmartXair copies any existing settings from the former SmartReticle app.
 
 ## Division 2 setup
 
 1. In the game's video settings, set the window mode to **Windowed** at your monitor's resolution.
-2. Leave **Force borderless** on (Settings tab). SmartXair removes the window frame and stretches the game over the monitor. Division 2 has no borderless mode, and no overlay can draw over exclusive fullscreen.
+2. Leave **Force borderless** on in the Settings tab. SmartXair removes the window frame and stretches the game over the monitor. The overlay requires windowed or borderless mode.
 3. Play. The crosshair hides when you alt-tab, minimise the game, or open a menu that shows the mouse cursor. `F8` toggles it at any time, and the key still reaches the game.
 
-If the debug log says `Borderless: FAILED`, the game runs as administrator. Run SmartXair as administrator too.
+If the debug log says `Borderless: FAILED`, first check that the game is in Windowed mode and both apps are running normally. If you run the game as administrator, SmartXair needs the same elevation to change its window style.
 
 ## Tabs
 
@@ -43,7 +43,9 @@ SmartXair uses only public Windows calls:
 
 It never injects into or reads the game's memory. Check the game's rules anyway.
 
-## Layout
+## Development
+
+Run `npm ci`, then `npm start` on Windows. If npm's install-script blocker skips Electron's download, run `node node_modules/electron/install.js` once.
 
 | Path | What |
 |---|---|

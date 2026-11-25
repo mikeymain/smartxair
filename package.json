@@ -7,7 +7,7 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test \"test/*.test.cjs\"",
-    "package": "electron-packager . SmartXair --platform=win32 --arch=x64 --icon=assets/smartxair.ico --out=dist --overwrite --prune=true --ignore=\"^/(dist|design|prototype-csharp|tests|test|bin|scripts|[.]claude|[.]finish-pass|snapshots)($|/)\"",
+    "package": "electron-packager . SmartXair --platform=win32 --arch=x64 --icon=assets/smartxair.ico --out=dist --overwrite --prune=true --ignore=\"^/(dist|design|docs|prototype-csharp|tests|test|bin|scripts|[.]claude|[.]finish-pass|snapshots)($|/)\"",
     "snapshot": "electron scripts/snapshot.cjs snapshots"
   },
   "dependencies": {
