@@ -41,6 +41,53 @@ test('a missing process name retries after one second despite frequent polls', (
   assert.equal(snapshots, 2);
 });
 
+test('listed windowed games and unlisted borderless games use general overlay rules', () => {
+  let name = 'SpaceGame';
+  let framed = false;
+  let fullscreen = true;
+  let cursorShown = false;
+  const monitor = { left: -1920, top: 0, right: 0, bottom: 1080 };
+  const { Detector } = loadModule('engine/detector.cjs', {
+    './win32.cjs': {
+      foregroundWindow: () => 10, windowPid: () => 11, isMinimized: () => false,
+      shellWindow: () => 1, className: () => 'GameWindow',
+      getStyle: () => framed ? 0x00c00000 : 0, WS: { CAPTION: 0x00c00000 },
+      windowRect: () => fullscreen ? monitor : { ...monitor, right: -400 },
+      monitorRect: () => monitor, clientCenter: () => ({ x: -960, y: 540 }),
+      cursor: () => ({ shown: cursorShown, pos: { x: -960, y: 540 } }),
+      clipRect: () => monitor
+    }
+  });
+  const detector = new Detector(99);
+  detector.processName = () => name;
+  const detection = { ...store.defaults().detection, autoFullscreen: true };
+  const evaluate = (changes = {}) => detector.evaluate({ ...detection, ...changes }, false);
+
+  assert.equal(evaluate().show, true, 'a borderless title can use a larger cursor clip');
+  assert.equal(evaluate().forceBorderless, false, 'an automatic match cannot change window styles');
+  framed = true;
+  assert.equal(evaluate().show, false, 'a maximized framed app is not a fullscreen match');
+  framed = false;
+  name = 'brave';
+  assert.equal(evaluate().show, false, 'a fullscreen browser is not a match');
+  name = 'SpaceGame';
+  fullscreen = false;
+  assert.equal(evaluate().show, false);
+  const games = [...detection.games, 'SpaceGame'];
+  assert.equal(evaluate({ games }).show, true);
+  assert.equal(evaluate({ games }).forceBorderless, false);
+  cursorShown = true;
+  assert.equal(evaluate({ games }).show, false);
+  assert.equal(evaluate({ games, hideWhenCursorVisible: false }).show, true);
+  cursorShown = false;
+  const custom = evaluate({ games, compatibilityForListedGames: true });
+  assert.equal(custom.reason, 'menu: mouse not locked');
+  assert.equal(custom.forceBorderless, true);
+  name = 'THeDivision2';
+  assert.equal(evaluate().reason, 'menu: mouse not locked');
+  assert.equal(evaluate().forceBorderless, true);
+});
+
 test('holding the hotkey toggles once across settings updates and again after release', () => {
   let ready;
   let down = false;

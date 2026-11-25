@@ -6,6 +6,7 @@ const RECENTER_RADIUS = 24;
 const MOVE_THRESHOLD = 3;
 // px: a clip rect this small means the game has locked the mouse (gameplay).
 const TINY_CLIP = 64;
+const DIVISION_2_EXE = 'TheDivision2';
 
 // Hides at once, so a menu never flashes the crosshair; shows only once "in game" has held for `delayMs`.
 class VisibilityGate {
@@ -36,11 +37,11 @@ class SoftCursorTracker {
 }
 
 // The rules applied in order once the game is known to be focused.
-function decide({ detection, cursorShown, softMenu, aiming, clipped }) {
+function decide({ detection, cursorShown, softMenu, aiming, clipped, requireMouseLock = detection.requireMouseLock }) {
   if (detection.hideWhenCursorVisible && cursorShown) return { show: false, reason: 'menu: cursor visible' };
   // Division 2 locks the mouse to a zero-size rect at the screen centre during play and frees it in the map and
   // menus, even while it hides the cursor for map dragging. Measured in-game; the most reliable menu signal.
-  if (detection.requireMouseLock && !clipped) return { show: false, reason: 'menu: mouse not locked' };
+  if (requireMouseLock && !clipped) return { show: false, reason: 'menu: mouse not locked' };
   if (detection.hideOnSoftwareCursor && softMenu) return { show: false, reason: 'menu: game-drawn cursor moving' };
   if (detection.aimMode === 'hideWhileAiming' && aiming) return { show: false, reason: 'aiming (hide while aiming)' };
   if (detection.aimMode === 'onlyWhileAiming' && !aiming) return { show: false, reason: 'not aiming (only while aiming)' };
@@ -127,5 +128,5 @@ class ComboWatcher {
 
 module.exports = {
   VisibilityGate, SoftCursorTracker, decide, isTinyClip, normalizeExe, isListedGame, NON_GAMES,
-  keyCode, parseCombo, ComboWatcher, RECENTER_RADIUS, TINY_CLIP, nextTickMs, FAST_TICK_MS, IDLE_TICK_MS
+  keyCode, parseCombo, ComboWatcher, RECENTER_RADIUS, TINY_CLIP, nextTickMs, FAST_TICK_MS, IDLE_TICK_MS, DIVISION_2_EXE
 };

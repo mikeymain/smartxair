@@ -1,6 +1,6 @@
 {
   "name": "smartxair",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "A crosshair overlay that shows only while you are actually playing. Built for The Division 2.",
   "main": "main.cjs",
   "private": true,

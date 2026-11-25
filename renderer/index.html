@@ -100,11 +100,11 @@
     <section class="pane settings-pane" role="tabpanel" id="pane-settings" aria-labelledby="tab-settings" data-pane="settings" hidden>
       <div class="card setup-card">
         <div class="card-head">
-          <p class="eyebrow">Division 2 setup</p>
+          <p class="eyebrow">Game setup</p>
        </div>
         <ol class="steps">
-          <li><strong>Windowed mode</strong> Native resolution.</li>
-          <li><strong>Force borderless on</strong></li>
+          <li><strong>Set display mode</strong> Choose borderless or windowed in the game.</li>
+          <li><strong>Add if needed</strong> Pick a running game below if it isn't detected.</li>
           <li><strong>Play</strong> <strong id="hotkey-name">F8</strong> toggles the overlay.</li>
         </ol>
       </div>
@@ -115,12 +115,13 @@
        </div>
         <div class="chips" id="game-chips"></div>
         <div class="add-row">
-          <input id="game-input" type="text" aria-label="Game executable name" placeholder="Add exe name, e.g. TheDivision2" autocomplete="off">
+          <input id="game-input" type="text" aria-label="Game executable name" placeholder="Game executable name" autocomplete="off">
           <button id="game-add" class="primary small" type="button">Add</button>
           <select id="game-running" aria-label="Add a running game">
-            <option value="">Pick a running app…</option>
+            <option value="">Pick a running game…</option>
           </select>
         </div>
+        <div class="game-detection" id="game-detection"></div>
       </div>
 
       <div class="card rules">

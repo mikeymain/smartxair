@@ -2,7 +2,7 @@
 // profiles, presets and share codes.
 const fs = require('node:fs');
 const path = require('node:path');
-const { normalizeExe, parseCombo } = require('./logic.cjs');
+const { normalizeExe, parseCombo, DIVISION_2_EXE } = require('./logic.cjs');
 
 const STYLES = ['cross', 'crossDot', 'tShape', 'dot', 'circle', 'circleDot', 'circleCross'];
 const AIM_MODES = ['always', 'hideWhileAiming', 'onlyWhileAiming'];
@@ -22,14 +22,15 @@ const PRESETS = Object.freeze([
 
 function defaults() {
   return {
-    version: 2,
+    version: 3,
     enabled: true,
     activeProfile: 'p1',
     profiles: [{ id: 'p1', name: 'Main', crosshair: { ...DEFAULT_CROSSHAIR } }],
     detection: {
-      games: ['TheDivision2'],
+      games: [DIVISION_2_EXE],
       forceBorderless: true,       // Division 2 has no borderless mode; run it Windowed and this does the rest.
-      autoFullscreen: false,
+      autoFullscreen: true,
+      compatibilityForListedGames: false,
       hideWhenCursorVisible: true,
       requireMouseLock: true,      // measured in Division 2: mouse locked to centre in play, free in map/menus
       hideOnSoftwareCursor: false, // see SoftCursorTracker: misfires on raw-input games
@@ -73,7 +74,7 @@ function cleanCrosshair(c = {}) {
   };
 }
 
-function cleanDetection(x = {}) {
+function cleanDetection(x = {}, legacy = false) {
   x ??= {};
   const d = defaults().detection;
   const games = Array.isArray(x.games)
@@ -81,10 +82,12 @@ function cleanDetection(x = {}) {
       .map(g => [g.toLowerCase(), g])).values()].slice(0, 50)
     : d.games;
   const combo = (v, def) => (typeof v === 'string' && parseCombo(v) ? v : def);
+  const legacyCustomList = legacy && games.some(game => game.toLowerCase() !== DIVISION_2_EXE.toLowerCase());
   return {
     games,
     forceBorderless: bool(x.forceBorderless, d.forceBorderless),
     autoFullscreen: bool(x.autoFullscreen, d.autoFullscreen),
+    compatibilityForListedGames: bool(x.compatibilityForListedGames, legacyCustomList),
     hideWhenCursorVisible: bool(x.hideWhenCursorVisible, d.hideWhenCursorVisible),
     requireMouseLock: bool(x.requireMouseLock, d.requireMouseLock),
     hideOnSoftwareCursor: bool(x.hideOnSoftwareCursor, d.hideOnSoftwareCursor),
@@ -110,11 +113,11 @@ function clean(raw) {
   if (!profiles.length) profiles = d.profiles;
   const active = profiles.some(p => p.id === s.activeProfile) ? s.activeProfile : profiles[0].id;
   return {
-    version: 2,
+    version: d.version,
     enabled: bool(s.enabled, d.enabled),
     activeProfile: active,
     profiles,
-    detection: cleanDetection(s.detection),
+    detection: cleanDetection(s.detection, s.version === 2),
     app: {
       launchAtLogin: bool(s.app && s.app.launchAtLogin, d.app.launchAtLogin),
       startMinimized: bool(s.app && s.app.startMinimized, d.app.startMinimized)

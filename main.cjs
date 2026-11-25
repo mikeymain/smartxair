@@ -191,7 +191,7 @@ if (!app.requestSingleInstanceLock()) {
     const aiming = !!aimCodes && aimCodes.every(win.keyDown);
 
     const r = detector.evaluate(settings.detection, aiming);
-    if (settings.detection.forceBorderless && r.window) borderless.tryApply(r.window);
+    if (r.forceBorderless) borderless.tryApply(r.window);
 
     const visible = gate.update(settings.enabled && r.show, settings.detection.showDelayMs, Date.now());
     placeOverlay(r.center, visible);

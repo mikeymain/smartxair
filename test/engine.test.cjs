@@ -14,11 +14,26 @@ test('normalizeExe strips path and .exe', () => {
   assert.equal(L.normalizeExe('   '), '');
 });
 
-test('Division 2 is the default game, force-borderless on, game-cursor rule off', () => {
+test('fullscreen detection is on and Division 2 has scoped compatibility rules by default', () => {
   const d = store.defaults().detection;
   assert.deepEqual(d.games, ['TheDivision2']);
+  assert.equal(d.autoFullscreen, true);
+  assert.equal(d.compatibilityForListedGames, false);
   assert.equal(d.forceBorderless, true);
   assert.equal(d.hideOnSoftwareCursor, false);
+});
+
+test('saved game lists preserve their compatibility rules and detection preference', () => {
+  const legacy = { version: 2, detection: { games: ['TheDivision2', 'OtherGame.exe'], autoFullscreen: false } };
+  const migrated = store.clean(legacy);
+  assert.equal(migrated.version, 3);
+  assert.deepEqual(migrated.detection.games, ['TheDivision2', 'OtherGame']);
+  assert.equal(migrated.detection.autoFullscreen, false);
+  assert.equal(migrated.detection.compatibilityForListedGames, true);
+  assert.equal(store.clean({ ...legacy, detection: { ...legacy.detection, games: ['thedivision2'] } })
+    .detection.compatibilityForListedGames, false);
+  assert.equal(store.clean({ ...migrated, detection: { ...migrated.detection, compatibilityForListedGames: false } })
+    .detection.compatibilityForListedGames, false);
 });
 
 test('share code SR2 round-trips', () => {

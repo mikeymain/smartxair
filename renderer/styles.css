@@ -210,6 +210,7 @@ button:focus-visible, .chip:focus-visible { outline: 2px solid var(--lime); outl
 
 /* ---- setup strip ---- */
 .setup-card { grid-column: 1 / -1; }
+.game-detection { margin-top: 12px; }
 .steps { counter-reset: step; list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .steps li { counter-increment: step; position: relative; padding: 12px 14px 12px 54px; border: 1px solid var(--line); border-radius: var(--r); background: var(--well);
   color: var(--ink-3); font-size: 13px; line-height: 1.5; }

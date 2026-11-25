@@ -256,7 +256,7 @@ function initDetectionTab() {
   };
   syncers.push(whenChanged(() => S.detection.games.join('|'), () => {
     chips.replaceChildren();
-    if (!S.detection.games.length) chips.append(el('span', { class: 'hint-inline', text: 'Add a game.' }));
+    if (!S.detection.games.length) chips.append(el('span', { class: 'hint-inline', text: 'No games added.' }));
     for (const g of S.detection.games) {
       chips.append(el('span', { class: 'chip-slot' }, [
         el('span', { class: 'chip game', text: g + '.exe' }),
@@ -271,20 +271,22 @@ function initDetectionTab() {
   const running = $('game-running');
   running.addEventListener('focus', async () => {
     const names = await api.runningGames();
-    running.replaceChildren(el('option', { value: '', text: 'Pick a running app…' }), ...names.map(n => el('option', { value: n, text: n })));
+    running.replaceChildren(el('option', { value: '', text: 'Pick a running game…' }), ...names.map(n => el('option', { value: n, text: n })));
   });
   running.addEventListener('change', () => { addGame(running.value); running.value = ''; });
 
   const rules = [
-    ['forceBorderless', 'Force borderless', 'Set the game to Windowed.', null, ''],
-    ['hideWhenCursorVisible', 'Hide in menus', '', null, ''],
-    ['requireMouseLock', 'Only show while the mouse is locked', '', null, ''],
-    ['hideOnSoftwareCursor', 'Hide when the game draws its own cursor', '', 'Experimental', ''],
-    ['autoFullscreen', 'Auto-detect fullscreen games', '', null, '']
+    ['autoFullscreen', 'Auto-detect fullscreen games', 'Matches borderless windows that fill a monitor.', null, 'game-detection'],
+    ['hideWhenCursorVisible', 'Hide while the mouse cursor is visible'],
+    ['hideOnSoftwareCursor', 'Hide when the game draws its own cursor', '', 'Experimental'],
+    ['forceBorderless', 'Force borderless', 'Set The Division 2 to Windowed to use this.'],
+    ['requireMouseLock', 'Require mouse lock', 'Hides the crosshair on The Division 2 map.'],
+    ['compatibilityForListedGames', 'Extend compatibility to all listed games',
+      'Force borderless and Require mouse lock apply only to The Division 2 by default.']
   ];
-  for (const [key, title, desc, tag, tagClass] of rules) {
-    const row = ruleRow({ title, desc, tag, tagClass, set: v => setDetection({ [key]: v }) });
-    $('rule-rows').append(row.node);
+  for (const [key, title, desc, tag, target = 'rule-rows'] of rules) {
+    const row = ruleRow({ title, desc, tag, set: v => setDetection({ [key]: v }) });
+    $(target).append(row.node);
     syncers.push(() => row.sync(S.detection[key]));
   }
 

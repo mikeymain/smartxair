@@ -1,6 +1,6 @@
 # SmartXair
 
-A free Windows crosshair overlay built for **The Division 2**. It shows during gameplay and hides in menus or when you switch apps.
+A free Windows crosshair overlay for games running in borderless or windowed mode. It follows the focused game and can hide when its cursor appears. **The Division 2** includes built-in compatibility rules.
 
 ![SmartXair crosshair editor with a live preview and controls for shape, colour, and size](docs/crosshair.png)
 
@@ -11,7 +11,13 @@ A free Windows crosshair overlay built for **The Division 2**. It shows during g
 
 On first launch, SmartXair copies any existing settings from the former SmartReticle app.
 
-## Division 2 setup
+## Set up a game
+
+1. Start the game in **Borderless** or **Windowed** mode. SmartXair's external overlay requires one of these modes.
+2. If the game isn't detected, open **Settings → Games** and pick it from the running games list or enter its executable name. Windowed games need to be added. New setups automatically detect borderless games that fill a monitor. If you upgraded with auto-detection off, turn on **Auto-detect fullscreen games** to use it.
+3. Press **F8** to toggle the overlay. If the game keeps its cursor visible during play, turn off **Hide while the mouse cursor is visible**.
+
+### The Division 2
 
 1. In the game's video settings, set the window mode to **Windowed** at your monitor's resolution.
 2. Leave **Force borderless** on in the Settings tab. SmartXair removes the window frame and stretches the game over the monitor. The overlay requires windowed or borderless mode.
@@ -22,10 +28,9 @@ If the debug log says `Borderless: FAILED`, first check that the game is in Wind
 ## Tabs
 
 - **Crosshair**: 7 shapes, colour, size, gap, thickness, outline, opacity and a pixel nudge. The live preview has game-like backdrops at actual size, 3× and 6× zoom. Save several crosshairs as profiles, start from presets, and copy or paste share codes (`SR2-…`; old `SR1-…` codes also load).
-- **Settings**: Division 2 setup steps, the game list, and the rules:
-  - Force borderless
-  - Hide in menus
-  - Only show while the mouse is locked: Division 2 locks the mouse to the screen centre during play and frees it on the map and in menus, even while you drag the map
+- **Settings**: game detection, the game list, and the rules:
+  - Force borderless and Require mouse lock apply to The Division 2 by default. To use them for other games, add those games and enable **Extend compatibility to all listed games**. Existing custom game lists keep their previous compatibility behavior.
+  - Hide while the mouse cursor is visible
   - Hide when the game draws its own cursor (experimental, off by default)
   - Auto-detect fullscreen games
   - Aim mode (`Always`, `Hide while aiming`, `Only while aiming`), with a configurable aim key
