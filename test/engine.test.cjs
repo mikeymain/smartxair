@@ -45,6 +45,17 @@ test('bad and corrupt share codes are rejected', () => {
   assert.equal(store.fromShareCode('SR2-' + Buffer.from('null').toString('base64url')), null);
 });
 
+test('SR2 share codes require an object but can omit crosshair fields', () => {
+  const code = value => 'SR2-' + Buffer.from(JSON.stringify(value)).toString('base64url');
+  for (const value of [false, 42, 'text', []]) assert.equal(store.fromShareCode(code(value)), null);
+  assert.equal(store.fromShareCode(code({ gap: 9 })).gap, 9);
+});
+
+test('SR1 share codes require at least one key-value pair', () => {
+  assert.equal(store.fromShareCode('SR1-'), null);
+  assert.equal(store.fromShareCode('SR1-' + Buffer.from('no separator').toString('base64url')), null);
+});
+
 test('settings values are clamped and junk is ignored', () => {
   const s = store.clean({ profiles: [{ id: 'a', name: 'x', crosshair: { gap: 9999, thickness: -5, style: 'nope', outline: false, color: 'red' } }] });
   const c = s.profiles[0].crosshair;

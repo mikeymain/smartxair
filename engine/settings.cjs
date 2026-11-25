@@ -162,7 +162,8 @@ function fromShareCode(code) {
   try {
     if (s.startsWith('SR2-')) {
       const crosshair = JSON.parse(Buffer.from(s.slice(4), 'base64url').toString('utf8'));
-      return crosshair === null ? null : cleanCrosshair(crosshair);
+      if (crosshair === null || typeof crosshair !== 'object' || Array.isArray(crosshair)) return null;
+      return cleanCrosshair(crosshair);
     }
     if (s.startsWith('SR1-')) {
       const pairs = Buffer.from(s.slice(4), 'base64').toString('utf8').split(';');
@@ -171,6 +172,7 @@ function fromShareCode(code) {
         const i = pair.indexOf('=');
         if (i > 0) o[pair.slice(0, i)] = pair.slice(i + 1);
       }
+      if (!Object.keys(o).length) return null;
       if (o.style) o.style = o.style[0].toLowerCase() + o.style.slice(1);
       o.outline = o.outline === '1';
       return cleanCrosshair(o);
